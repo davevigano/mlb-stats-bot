@@ -3,7 +3,6 @@
 import json
 import statsapi
 import datetime
-import pandas
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 ## LIST OF AVAILABLE COMMANDS ##
