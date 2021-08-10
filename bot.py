@@ -9,7 +9,10 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 commands = [
     '/hr_leaders [season, default is current]',
-    '/hr_leaders_rookies [season, default is current]'
+    '/hr_leaders_rookies [season, default is current]',
+    '/era_leaders [season, default is current]',
+    '/era_leaders_rookies [season, default is current',
+    '/today_schedule'
 ]
 
 ## READING THE TOKEN FROM THE JSON FILE ##
@@ -49,9 +52,9 @@ def hr_leaders(update, context): ## HOMERUNS LEADERS ##
         header = 'USE YOUR PHONE HORIZONTALLY!\n\nHR Leaders for current season:\n\n'
         data = statsapi.league_leaders('homeRuns', season = currentseason, limit = 5)
     else:
-        header = f'HR Leaders for {s} season: \n\n'
+        header = f'USE YOUR PHONE HORIZONTALLY!\n\nHR Leaders for {s} season:\n\n'
         data = statsapi.league_leaders('homeRuns', season = s, limit = 5)
-    # data.split('\n')
+    data.split('\n')
     msg = header + data
     update.message.reply_text(f'{msg}')
 
@@ -69,11 +72,59 @@ def hr_leaders_rookies(update, context): ## ROOKIES HOMERUNS LEADERS ##
         header = 'USE YOUR PHONE HORIZONTALLY!\n\nHR Rookies Leaders for current season:\n\n'
         data = statsapi.league_leaders('homeRuns', season = currentseason, playerPool = 'rookies', limit = 5)
     else:
-        header = f'HR Rookies Leaders for {s} season: \n\n'
+        header = f'USE YOUR PHONE HORIZONTALLY!\n\nHR Rookies Leaders for {s} season:\n\n'
         data = statsapi.league_leaders('homeRuns', season = s, playerPool = 'rookies', limit = 5)
     data.split('\n')
     msg = header + data
     update.message.reply_text(f'{msg}')
+
+def era_leaders(update, context): ## ERA LEADERS ##
+    flag = True
+    try:
+        s = int(extract_number(update.message.text))
+    except:
+        flag = False
+    if flag is False:
+        currentDateTime = datetime.datetime.now()
+        date = currentDateTime.date()
+        year = date.strftime('%Y')
+        currentseason = int(year)
+        header = 'USE YOUR PHONE HORIZONTALLY!\n\nERA Leaders for current season:\n\n'
+        data = statsapi.league_leaders('earnedRunAverage', season = currentseason, limit = 5)
+    else:
+        header = f'USE YOUR PHONE HORIZONTALLY!\n\nERA Leaders for {s} season:\n\n'
+        data = statsapi.league_leaders('earnedRunAverage', season = s, limit = 5)
+    data.split('\n')
+    msg = header + data
+    update.message.reply_text(f'{msg}')
+
+def era_leaders_rookies(update, context): ## ROOKIES ERA LEADERS ##
+    flag = True
+    try:
+        s = int(extract_number(update.message.text))
+    except:
+        flag = False
+    if flag is False:
+        currentDateTime = datetime.datetime.now()
+        date = currentDateTime.date()
+        year = date.strftime('%Y')
+        currentseason = int(year)
+        header = 'USE YOUR PHONE HORIZONTALLY!\n\nERA Rookies Leaders for current season:\n\n'
+        data = statsapi.league_leaders('earnedRunAverage', season = currentseason, playerPool = 'rookies', limit = 5)
+    else:
+        header = f'USE YOUR PHONE HORIZONTALLY!\n\nERA Rookies Leaders for {s} season:\n\n'
+        data = statsapi.league_leaders('earnedRunAverage', season = s, playerPool = 'rookies', limit = 5)
+    data.split('\n')
+    msg = header + data
+    update.message.reply_text(f'{msg}')
+
+def today_schedule(update, context): ## TODAY'S SCHEDULE ##
+    header = 'USE YOUR PHONE HORIZONTALLY!\n\nToday\'s games schedule:\n\n'
+    data = statsapi.schedule()
+    finaldata = header
+    for i in data:
+        finaldata += i['summary'] + ' - ' + i['game_datetime'].split('T', 1)[1] + '\n\n'
+    update.message.reply_text(f'{finaldata}') 
 
 ## BOT STARTUP ##
 
@@ -87,6 +138,9 @@ def main():
     disp.add_handler(CommandHandler('help', help))
     disp.add_handler(CommandHandler('hr_leaders', hr_leaders))
     disp.add_handler(CommandHandler('hr_leaders_rookies', hr_leaders_rookies))
+    disp.add_handler(CommandHandler('era_leaders', era_leaders))
+    disp.add_handler(CommandHandler('era_leaders_rookies', era_leaders_rookies))
+    disp.add_handler(CommandHandler('today_schedule', today_schedule))
     
     upd.start_polling()
     print('BOT STARTED AT https://t.me/MLBStats_Bot')
