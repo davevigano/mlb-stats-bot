@@ -1,8 +1,8 @@
 ## IMPORTING LIBRARIES ##
 
 import json
-import statsapi
 import datetime
+import statsapi
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 ## LIST OF AVAILABLE COMMANDS ##
