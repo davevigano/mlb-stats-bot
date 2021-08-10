@@ -1,5 +1,7 @@
 # telegram-MLBStats_Bot
 A simple baseball-related bot for Telegram.<br><br>
 Libraries I used in this project so far:<br>
--MLB-StatsAPI
--python-telegram-bot   
+Markup : - Bullet list
+              - Nested bullet
+                  - Sub-nested bullet etc
+          - Bullet list item 2  
