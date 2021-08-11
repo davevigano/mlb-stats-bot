@@ -13,4 +13,5 @@ List of available commands:
 <li>/hr_leaders_rookies [season, default is current]</li>
 <li>/era_leaders [season, default is current]</li>
 <li>/era_leaders_rookies [season, default is current]</li>
-<li>/today_schedule
+<li>/today_schedule</li>
+<li>/player [first name or last name]</li>

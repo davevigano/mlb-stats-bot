@@ -12,7 +12,8 @@ commands = [
     '/hr_leaders_rookies [season, default is current]',
     '/era_leaders [season, default is current]',
     '/era_leaders_rookies [season, default is current',
-    '/today_schedule'
+    '/today_schedule',
+    '/player [first name or last name]'
 ]
 
 ## READING THE TOKEN FROM THE JSON FILE ##
@@ -122,9 +123,25 @@ def today_schedule(update, context): ## TODAY'S SCHEDULE ##
     header = 'USE YOUR PHONE HORIZONTALLY!\n\nToday\'s games schedule:\n\n'
     data = statsapi.schedule()
     finaldata = header
-    for i in data:
-        finaldata += i['summary'] + ' - ' + i['game_datetime'].split('T', 1)[1] + '\n\n'
+    for game in data:
+        finaldata += game['summary'] + ' - ' + game['game_datetime'].split('T', 1)[1] + '\n\n'
     update.message.reply_text(f'{finaldata}') 
+
+def player(update, context): ## LOOKUP PLAYER INFORMATION ##
+    try:
+        n = extract_number(update.message.text)
+    except:
+        update.message.reply_text('No player name given.')
+        return
+    header = 'USE YOUR PHONE HORIZONTALLY!\n\nPlayers found: \n\n'
+    data = statsapi.lookup_player(n)
+    if not data:
+        update.message.reply_text(f'No players found with name \'{n}\'.')
+    else:
+        finaldata = header
+        for player in data:
+            finaldata += ('Full name: {}\nNumber: {}\nPosition: {}\nMLB Debut: {}\n\n'.format(player['fullFMLName'], player['primaryNumber'], player['primaryPosition']['abbreviation'], player['mlbDebutDate']))
+        update.message.reply_text(f'{finaldata}')
 
 ## BOT STARTUP ##
 
@@ -141,6 +158,7 @@ def main():
     disp.add_handler(CommandHandler('era_leaders', era_leaders))
     disp.add_handler(CommandHandler('era_leaders_rookies', era_leaders_rookies))
     disp.add_handler(CommandHandler('today_schedule', today_schedule))
+    disp.add_handler(CommandHandler('player', player))
     
     upd.start_polling()
     print('BOT STARTED AT https://t.me/MLBStats_Bot')
